@@ -17,8 +17,8 @@ var DashboardComponent = (function () {
     }
     DashboardComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.heroService.getPosts()
-            .subscribe(function (heroes) { return _this.heroes = heroes; }, function (error) { return console.log(error); });
+        this.heroService.getHeroes1()
+            .subscribe(function (heroes) { return _this.heroes = heroes.data; }, function (error) { return console.log(error); });
         /*this.heroService.getHeroes()
             .then(heroes => this.heroes = heroes.slice(1, 5));*/
     };

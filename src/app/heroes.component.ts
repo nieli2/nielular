@@ -20,7 +20,8 @@ export class HeroesComponent implements OnInit  {
 	) { }
 
 	getHeroes(): void {
-  		this.heroService.getHeroes().then(heroes => this.heroes = heroes);
+  		this.heroService.getHeroes1()
+  			.subscribe(heroes => this.heroes = heroes.data);
 	}
 
 	ngOnInit(): void {
@@ -43,6 +44,13 @@ export class HeroesComponent implements OnInit  {
 				this.heroes.push(hero);
 				this.selectedHero = null;
 			});
+	}
+	add1(name: String): void {
+		if (!name) {}
+		this.heroService.create1(name)
+			.subscribe(
+				hero => this.heroes.push(hero),
+				error => this.errorMessage = <any>error);
 	}
 
 	delete(hero: Hero): void {

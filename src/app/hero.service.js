@@ -10,17 +10,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require("@angular/core");
 var http_1 = require("@angular/http");
-require("rxjs/Rx");
 require("rxjs/add/operator/toPromise");
+require("rxjs/add/operator/catch");
+require("rxjs/add/operator/map");
 var HeroService = (function () {
     function HeroService(http) {
         this.http = http;
         this.heroesUrl = 'api/heroes'; // url to web api
+        this.heroesUrl1 = 'http://www.laravel.dev/angular';
         this.headers = new http_1.Headers({ 'content-type': 'application/json' });
     }
-    HeroService.prototype.getPosts = function () {
-        return this.http.get('http://www.laravel.dev/angular')
-            .map(function (res) { return res.json().reverse(); });
+    HeroService.prototype.getHeroes1 = function () {
+        return this.http.get(this.heroesUrl1)
+            .map(this.extractData)
+            .catch(this.handleError);
+    };
+    HeroService.prototype.extractData = function (res) {
+        var body = res.json();
+        //return body.data || { }; //this is the original syntax
+        return body;
     };
     HeroService.prototype.getHeroes = function () {
         return this.http.get(this.heroesUrl)
@@ -59,6 +67,13 @@ var HeroService = (function () {
             .post(this.heroesUrl, JSON.stringify({ name: name }), { headers: this.headers })
             .toPromise()
             .then(function (res) { return res.json().data; })
+            .catch(this.handleError);
+    };
+    HeroService.prototype.create1 = function (name) {
+        var headers = new http_1.Headers({ 'Content-Type': 'application/json' });
+        var options = new http_1.RequestOptions({ headers: headers });
+        return this.http.post(this.heroesUrl1 + '-insert', { name: name }, options)
+            .map(this.extractData)
             .catch(this.handleError);
     };
     HeroService.prototype.delete = function (id) {

@@ -1,21 +1,31 @@
 import { Injectable }		from '@angular/core';
-import { Headers, Http, Response }	from '@angular/http';
-import 'rxjs/Rx';
+import { Headers, Http, Response, RequestOptions }	from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 
 import { Hero }				from './hero';
 
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/map';
+
 @Injectable()
 
 export class HeroService {
 	private heroesUrl = 'api/heroes'; // url to web api
+	private heroesUrl1 = 'http://www.laravel.dev/angular';
 
 	constructor(private http: Http) {}
 
-	getPosts() {
-		return this.http.get('http://www.laravel.dev/angular')
-		.map(res => res.json().reverse())
+	getHeroes1(): Observable<Hero[]> {
+		return this.http.get(this.heroesUrl1)
+	        .map(this.extractData)
+	        .catch(this.handleError);
+	}
+	private extractData(res: Response) {
+		let body = res.json();
+		//return body.data || { }; //this is the original syntax
+		return body;
 	}
 
 	getHeroes(): Promise<Hero[]> {
@@ -61,6 +71,13 @@ export class HeroService {
 			.post(this.heroesUrl, JSON.stringify({name: name}), {headers: this.headers})
 			.toPromise()
 			.then(res => res.json().data as Hero)
+			.catch(this.handleError);
+	}
+	create1(name: String): Observable<Hero> {
+		let headers = new Headers({'Content-Type':'application/json'});
+		let options = new RequestOptions({headers:headers});
+		return this.http.post(this.heroesUrl1+'-insert', {name}, options)
+			.map(this.extractData)
 			.catch(this.handleError);
 	}
 
